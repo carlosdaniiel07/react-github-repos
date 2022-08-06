@@ -1,8 +1,8 @@
-import styled from "styled-components";
+import styled, { keyframes, css } from "styled-components";
 
 export const Container = styled.div`
   max-width: 700px;
-  background-color: #FFF;
+  background-color: #fff;
   border-radius: 4px;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
   padding: 30px;
@@ -27,20 +27,50 @@ export const Form = styled.form`
 
   input {
     flex: 1;
-    border: 1px solid #DDD;
+    border: 1px solid #ddd;
     padding: 10px 15px;
     border-radius: 4px;
     font-size: 17px;
   }
 `;
 
-export const SubmitButton = styled.button`
-  background-color: #0D2636;
+const animate = keyframes`
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+`;
+
+type ButtonProps = {
+  loading: boolean;
+};
+
+export const SubmitButton = styled.button.attrs<ButtonProps>(({ loading }) => ({
+  type: "submit",
+  disabled: loading ? 1 : 0,
+}))<ButtonProps>`
+  background-color: #0d2636;
   border: 0;
   border-radius: 4px;
   margin-left: 10px;
   padding: 0 15px;
-  display:  flex;
+  display: flex;
   justify-content: center;
   align-items: center;
+
+  &[disabled] {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+
+  ${({ loading }) =>
+    loading &&
+    css`
+      svg {
+        animation: ${animate} 2s linear infinite;
+      }
+    `}
 `;
