@@ -12,6 +12,7 @@ const AppRoutes = () => (
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="repository/:name" element={<Repository />} />
+      <Route path="*" element={<Home />} />
     </Routes>
     <ToastContainer
       position="top-center"

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { FaBars, FaGithub, FaPlus, FaSpinner, FaTrash } from "react-icons/fa";
 import { toast } from "react-toastify";
+import { Link } from "react-router-dom";
 import { Container, DeleteButton, Form, List, SubmitButton } from "./styles";
 import api from "~/services/api";
 import storage from "~/services/storage";
@@ -92,9 +93,9 @@ const Home = () => {
               <span>{item.full_name}</span>
             </div>
 
-            <a href="">
+            <Link to={`repository/${item.full_name.replace("/", "-")}`}>
               <FaBars size={20} />
-            </a>
+            </Link>
           </li>
         ))}
       </List>
