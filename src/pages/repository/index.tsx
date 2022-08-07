@@ -10,7 +10,7 @@ const Repository = () => {
         color: "white",
       }}
     >
-      Repositório: {name}
+      Repositório: {decodeURIComponent(name ?? '')}
     </div>
   );
 };

@@ -93,7 +93,7 @@ const Home = () => {
               <span>{item.full_name}</span>
             </div>
 
-            <Link to={`repository/${item.full_name.replace("/", "-")}`}>
+            <Link to={`repository/${encodeURIComponent(item.full_name)}`}>
               <FaBars size={20} />
             </Link>
           </li>
