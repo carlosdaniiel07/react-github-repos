@@ -9,7 +9,7 @@ import { RepositoryModel } from "~/models";
 
 const Home = () => {
   const [repository, setRepository] = useState("");
-  const [repositories, setRepositories] = useState<RepositoryModel[]>([]);
+  const [repositories, setRepositories] = useState<RepositoryModel[]>();
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -18,8 +18,7 @@ const Home = () => {
   }, []);
 
   useEffect(() => {
-    const hasRepositories = repositories?.length > 0;
-    hasRepositories && storage.save("repositories", repositories);
+    repositories && storage.save("repositories", repositories);
   }, [repositories]);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>): void => {
@@ -31,7 +30,7 @@ const Home = () => {
       return;
     }
 
-    const alreadyExists = repositories.find(
+    const alreadyExists = repositories?.find(
       ({ full_name }) => full_name === repository
     );
 
@@ -46,7 +45,9 @@ const Home = () => {
 
     api
       .get<RepositoryModel>(`/repos/${repository}`)
-      .then((response) => setRepositories([...repositories, response.data]))
+      .then((response) =>
+        setRepositories([...(repositories ?? []), response.data])
+      )
       .catch(() => toast.error(`Repositório "${repository}" não encontrado`))
       .finally(() => {
         setLoading(false);
@@ -55,7 +56,7 @@ const Home = () => {
   };
 
   const handleDelete = (index: number): void => {
-    const newRepos = [...repositories];
+    const newRepos = [...(repositories ?? [])];
     newRepos.splice(index, 1);
     setRepositories(newRepos);
   };
@@ -84,7 +85,7 @@ const Home = () => {
       </Form>
 
       <List>
-        {repositories.map((item, index) => (
+        {repositories?.map((item, index) => (
           <li key={`repo-${index}`}>
             <div>
               <DeleteButton onClick={() => handleDelete(index)}>
