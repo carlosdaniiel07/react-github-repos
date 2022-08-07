@@ -15,8 +15,6 @@ const Repository = () => {
     const loadData = async (): Promise<void> => {
       const repoName = decodeURIComponent(name ?? "");
 
-      console.log("Ola");
-
       setLoading(true);
 
       try {
