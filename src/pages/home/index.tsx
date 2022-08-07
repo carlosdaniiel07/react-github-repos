@@ -1,6 +1,6 @@
-import React, { useState, useCallback } from "react";
-import { FaGithub, FaPlus, FaSpinner } from "react-icons/fa";
-import { Container, Form, SubmitButton } from "./styles";
+import React, { useState } from "react";
+import { FaBars, FaGithub, FaPlus, FaSpinner, FaTrash } from "react-icons/fa";
+import { Container, DeleteButton, Form, List, SubmitButton } from "./styles";
 import api from "~/services/api";
 import { RepositoryModel } from "~/models";
 
@@ -9,32 +9,31 @@ const Home = () => {
   const [repositories, setRepositories] = useState<RepositoryModel[]>([]);
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = useCallback(
-    (event: React.FormEvent<HTMLFormElement>) => {
-      const submit = async (): Promise<void> => {
-        if (!repository || repository.length === 0) {
-          return;
-        }
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>): void => {
+    event.preventDefault();
 
-        setLoading(true);
+    const isValidRepository = repository?.trim().length > 0;
 
-        try {
-          const data = (await api.get<RepositoryModel>(`/repos/${repository}`))
-            .data;
+    if (!isValidRepository) {
+      return;
+    }
 
-          setRepositories([...repositories, data]);
-          setRepository("");
-        } catch (err) {
-        } finally {
-          setLoading(false);
-        }
-      };
+    setLoading(true);
 
-      event.preventDefault();
-      submit();
-    },
-    [repositories, repository]
-  );
+    api
+      .get<RepositoryModel>(`/repos/${repository}`)
+      .then((response) => setRepositories([...repositories, response.data]))
+      .finally(() => {
+        setLoading(false);
+        setRepository("");
+      });
+  };
+
+  const handleDelete = (index: number): void => {
+    const newRepos = [...repositories];
+    newRepos.splice(index, 1);
+    setRepositories(newRepos);
+  };
 
   return (
     <Container>
@@ -58,6 +57,23 @@ const Home = () => {
           )}
         </SubmitButton>
       </Form>
+
+      <List>
+        {repositories.map((item, index) => (
+          <li key={`repo-${index}`}>
+            <div>
+              <DeleteButton onClick={() => handleDelete(index)}>
+                <FaTrash size={14} />
+              </DeleteButton>
+              <span>{item.full_name}</span>
+            </div>
+
+            <a href="">
+              <FaBars size={20} />
+            </a>
+          </li>
+        ))}
+      </List>
     </Container>
   );
 };
