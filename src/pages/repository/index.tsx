@@ -125,18 +125,20 @@ const Repository = () => {
         ))}
       </IssuesList>
 
-      <PageActions>
-        <button
-          type="button"
-          onClick={handlePreviousPage}
-          disabled={page === 1}
-        >
-          Anterior
-        </button>
-        <button type="button" onClick={handleNextPage}>
-          Próximo
-        </button>
-      </PageActions>
+      {(issues?.length ?? 0) > 0 && (
+        <PageActions>
+          <button
+            type="button"
+            onClick={handlePreviousPage}
+            disabled={page === 1}
+          >
+            Anterior
+          </button>
+          <button type="button" onClick={handleNextPage}>
+            Próximo
+          </button>
+        </PageActions>
+      )}
     </Container>
   );
 };
