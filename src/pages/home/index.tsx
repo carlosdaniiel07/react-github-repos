@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { FaBars, FaGithub, FaPlus, FaSpinner, FaTrash } from "react-icons/fa";
+import { FaGithub, FaInfoCircle, FaPlus, FaSpinner, FaTrash } from "react-icons/fa";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 import { Container, DeleteButton, Form, List, SubmitButton } from "./styles";
@@ -95,7 +95,7 @@ const Home = () => {
             </div>
 
             <Link to={`repository/${encodeURIComponent(item.full_name)}`}>
-              <FaBars size={20} />
+              <FaInfoCircle size={20} />
             </Link>
           </li>
         ))}
