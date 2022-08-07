@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { IssueModel, RepositoryModel } from "~/models";
 import api from "~/services/api";
-import { BackButton, Container, Loading, Owner } from "./styles";
+import { BackButton, Container, IssuesList, Loading, Owner } from "./styles";
 
 const Repository = () => {
   const [repository, setRepository] = useState<RepositoryModel>();
@@ -63,6 +63,29 @@ const Repository = () => {
         <h1>{repository?.full_name}</h1>
         <p>{repository?.description}</p>
       </Owner>
+
+      <IssuesList>
+        {issues?.map((issue) => (
+          <li key={String(issue.id)}>
+            <img
+              src={issue.user?.avatar_url}
+              alt={issue.user?.login}
+              title={issue.user?.login}
+            />
+            <div>
+              <strong>
+                <a href={issue.html_url} target="_blank" rel="noreferrer">
+                  {issue.title}
+                </a>
+                {issue.labels?.map((label) => (
+                  <span key={String(label.id)}>{label.name}</span>
+                ))}
+              </strong>
+              <p>{issue.user?.login}</p>
+            </div>
+          </li>
+        ))}
+      </IssuesList>
     </Container>
   );
 };
