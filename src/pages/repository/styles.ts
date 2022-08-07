@@ -110,3 +110,25 @@ export const IssuesList = styled.ul`
     }
   }
 `;
+
+export const PageActions = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+
+  button {
+    outline: 0;
+    border: 0;
+    background-color: #222;
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 4px;
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+  }
+`;

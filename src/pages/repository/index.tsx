@@ -4,12 +4,20 @@ import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { IssueModel, RepositoryModel } from "~/models";
 import api from "~/services/api";
-import { BackButton, Container, IssuesList, Loading, Owner } from "./styles";
+import {
+  BackButton,
+  Container,
+  IssuesList,
+  Loading,
+  Owner,
+  PageActions,
+} from "./styles";
 
 const Repository = () => {
   const [repository, setRepository] = useState<RepositoryModel>();
   const [issues, setIssues] = useState<IssueModel[]>();
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
 
   const { name } = useParams();
 
@@ -41,6 +49,36 @@ const Repository = () => {
 
     loadData();
   }, [name]);
+
+  useEffect(() => {
+    const loadIssues = (): void => {
+      api
+        .get<IssueModel[]>(`/repos/${repository?.full_name}/issues`, {
+          params: {
+            state: "open",
+            per_page: 10,
+            page,
+          },
+        })
+        .then(({ data }) => setIssues(data))
+        .catch(() =>
+          toast.error("Ocorreu um erro ao carregar os dados do repositório")
+        );
+    };
+
+    repository && loadIssues();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page]);
+
+  const handlePreviousPage = (): void => {
+    const newPage = page - 1;
+    newPage > 0 && setPage(newPage);
+  };
+
+  const handleNextPage = (): void => {
+    const newPage = page + 1;
+    setPage(newPage);
+  };
 
   return loading ? (
     <Loading>
@@ -86,6 +124,19 @@ const Repository = () => {
           </li>
         ))}
       </IssuesList>
+
+      <PageActions>
+        <button
+          type="button"
+          onClick={handlePreviousPage}
+          disabled={page === 1}
+        >
+          Anterior
+        </button>
+        <button type="button" onClick={handleNextPage}>
+          Próximo
+        </button>
+      </PageActions>
     </Container>
   );
 };
