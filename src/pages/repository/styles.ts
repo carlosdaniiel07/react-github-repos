@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import { Link } from "react-router-dom";
 
 export const Container = styled.div`
@@ -57,10 +57,47 @@ export const Owner = styled.header`
   }
 `;
 
-export const IssuesList = styled.ul`
-  margin-top: 30px;
-  padding-top: 30px;
+export const IssuesFilters = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
   border-top: 1px solid #eee;
+  margin-top: 16px;
+  padding-top: 16px;
+`;
+
+type FilterButtonProps = {
+  selected: boolean;
+  onClick(): void;
+};
+
+export const FilterButton = styled.button.attrs<FilterButtonProps>(() => ({
+  type: "button",
+}))<FilterButtonProps>`
+  outline: 0;
+  border: 1px solid #222;
+  background-color: transparent;
+  color: #000;
+  padding: 5px 10px;
+  border-radius: 4px;
+  margin: 0px 3px;
+  transform: 0.3s;
+
+  &:hover {
+    background-color: #222;
+    color: #fff;
+  }
+
+  ${({ selected }) =>
+    selected &&
+    css`
+      background-color: #222;
+      color: #fff;
+    `}
+`;
+
+export const IssuesList = styled.ul`
+  margin-top: 10px;
   list-style: none;
 
   li {

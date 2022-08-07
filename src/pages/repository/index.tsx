@@ -7,6 +7,8 @@ import api from "~/services/api";
 import {
   BackButton,
   Container,
+  FilterButton,
+  IssuesFilters,
   IssuesList,
   Loading,
   Owner,
@@ -18,6 +20,7 @@ const Repository = () => {
   const [issues, setIssues] = useState<IssueModel[]>();
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
+  const [filter, setFilter] = useState<"all" | "open" | "closed">("all");
 
   const { name } = useParams();
 
@@ -51,24 +54,27 @@ const Repository = () => {
   }, [name]);
 
   useEffect(() => {
-    const loadIssues = (): void => {
-      api
-        .get<IssueModel[]>(`/repos/${repository?.full_name}/issues`, {
-          params: {
-            state: "open",
-            per_page: 10,
-            page,
-          },
-        })
-        .then(({ data }) => setIssues(data))
-        .catch(() =>
-          toast.error("Ocorreu um erro ao carregar os dados do repositório")
-        );
-    };
-
-    repository && loadIssues();
+    repository && loadIssues(repository.full_name, filter);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page]);
+  }, [page, filter]);
+
+  const loadIssues = (
+    repository: string,
+    state: "all" | "open" | "closed"
+  ): void => {
+    api
+      .get<IssueModel[]>(`/repos/${repository}/issues`, {
+        params: {
+          state,
+          page,
+          per_page: 10,
+        },
+      })
+      .then(({ data }) => setIssues(data))
+      .catch(() =>
+        toast.error("Ocorreu um erro ao carregar os dados do repositório")
+      );
+  };
 
   const handlePreviousPage = (): void => {
     const newPage = page - 1;
@@ -101,6 +107,29 @@ const Repository = () => {
         <h1>{repository?.full_name}</h1>
         <p>{repository?.description}</p>
       </Owner>
+
+      {(issues?.length ?? 0) > 0 && (
+        <IssuesFilters>
+          <FilterButton
+            selected={filter === "all"}
+            onClick={() => setFilter("all")}
+          >
+            Todas
+          </FilterButton>
+          <FilterButton
+            selected={filter === "open"}
+            onClick={() => setFilter("open")}
+          >
+            Abertas
+          </FilterButton>
+          <FilterButton
+            selected={filter === "closed"}
+            onClick={() => setFilter("closed")}
+          >
+            Fechadas
+          </FilterButton>
+        </IssuesFilters>
+      )}
 
       <IssuesList>
         {issues?.map((issue) => (
