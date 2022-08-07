@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { FaBars, FaGithub, FaPlus, FaSpinner, FaTrash } from "react-icons/fa";
+import { toast } from "react-toastify";
 import { Container, DeleteButton, Form, List, SubmitButton } from "./styles";
 import api from "~/services/api";
 import { RepositoryModel } from "~/models";
@@ -12,9 +13,20 @@ const Home = () => {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>): void => {
     event.preventDefault();
 
-    const isValidRepository = repository?.trim().length > 0;
+    const isValidRepo = repository?.trim().length > 0;
 
-    if (!isValidRepository) {
+    if (!isValidRepo) {
+      return;
+    }
+
+    const alreadyExists = repositories.find(
+      ({ full_name }) => full_name === repository
+    );
+
+    if (alreadyExists) {
+      toast.info(`Repositório "${repository}" já foi adicionado`);
+      setRepository("");
+
       return;
     }
 
@@ -23,6 +35,7 @@ const Home = () => {
     api
       .get<RepositoryModel>(`/repos/${repository}`)
       .then((response) => setRepositories([...repositories, response.data]))
+      .catch(() => toast.error(`Repositório "${repository}" não encontrado`))
       .finally(() => {
         setLoading(false);
         setRepository("");
