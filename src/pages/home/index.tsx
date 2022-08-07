@@ -1,14 +1,25 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaBars, FaGithub, FaPlus, FaSpinner, FaTrash } from "react-icons/fa";
 import { toast } from "react-toastify";
 import { Container, DeleteButton, Form, List, SubmitButton } from "./styles";
 import api from "~/services/api";
+import storage from "~/services/storage";
 import { RepositoryModel } from "~/models";
 
 const Home = () => {
   const [repository, setRepository] = useState("");
   const [repositories, setRepositories] = useState<RepositoryModel[]>([]);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const savedRepositories = storage.get<RepositoryModel[]>("repositories");
+    savedRepositories && setRepositories(savedRepositories);
+  }, []);
+
+  useEffect(() => {
+    const hasRepositories = repositories?.length > 0;
+    hasRepositories && storage.save("repositories", repositories);
+  }, [repositories]);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>): void => {
     event.preventDefault();
